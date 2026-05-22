@@ -246,6 +246,5 @@ MIT (same as grokscope)
 
 ## Related
 
-- Original incident report: `~/grok-sub-agent-runaway-issue/INCIDENT.md`
 - grokscope (grok-tap + grok-monitor): https://github.com/daniel-farina/grokscope
 - Grok Build TUI documentation (user guide)
