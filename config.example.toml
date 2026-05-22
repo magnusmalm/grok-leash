@@ -1,0 +1,16 @@
+# Example configuration for grok-leash
+# Copy to ~/.config/grok-leash/config.toml and customize
+
+[monitor]
+read_threshold = 30
+time_window_minutes = 6
+small_limit_threshold = 80
+
+[actions]
+enable_desktop_notifications = true
+enable_kill_action = false          # DANGER: experimental
+write_action_file = true
+notify_parent_via_file = true
+
+[detection]
+warn_on_missing_budget = true
