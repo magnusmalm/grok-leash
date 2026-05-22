@@ -34,7 +34,7 @@ Root causes observed:
 This project is managed exclusively with `uv`.
 
 ```bash
-cd ~/devel/grok-leash
+cd /path/to/your/grok-leash-clone
 uv sync
 ```
 
@@ -148,16 +148,18 @@ For day-to-day use you almost certainly want the monitor running in the backgrou
    ```bash
    mkdir -p ~/.config/systemd/user
    cp contrib/grok-leash.service ~/.config/systemd/user/
+   # Edit the service file if your clone is not in a location the launcher can auto-detect
    systemctl --user daemon-reload
    systemctl --user enable --now grok-leash.service
    ```
 
-**Important:** The launchers default to `~/devel/grok-leash`.  
-If you cloned the repo to a different location, set the environment variable when running the commands:
+**Project location detection:**  
+The launchers automatically detect the project root using:
 
-```bash
-PROJECT_DIR=$HOME/path/to/grok-leash grok-leash-monitor
-```
+- The `PROJECT_DIR` environment variable (if set), or
+- The current git repository root (if you run the command while inside the clone).
+
+This means you usually do **not** need to set `PROJECT_DIR` as long as you are inside the grok-leash directory or have the launcher in PATH.
 
 3. Watch logs:
 
@@ -175,12 +177,8 @@ grok-leash-monitor
 grok-leash-watch
 ```
 
-**Note on clone location:** The launchers hard-code a default of `~/devel/grok-leash`.  
-If your clone lives elsewhere, prefix commands with `PROJECT_DIR=...`:
-
-```bash
-PROJECT_DIR=$HOME/work/grok-leash grok-leash-monitor
-```
+**Project location detection:**  
+The launchers will find the project automatically if you are inside the git repository, or you can set `PROJECT_DIR`. See the note in the systemd section above.
 
 See `contrib/` for the exact files.
 

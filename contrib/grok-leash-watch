@@ -2,17 +2,33 @@
 #
 # contrib/grok-leash-watch
 #
-# Portable launcher for the actions watcher (companion to the main monitor).
-# Copy to ~/.local/bin/grok-leash-watch and make executable.
+# Portable launcher for the actions watcher.
+# Copy to ~/.local/bin/grok-leash-watch and make it executable.
 #
-# Usage:
-#   grok-leash-watch
+# Uses the same project discovery logic as grok-leash-monitor.
 #
 
 set -euo pipefail
 
-PROJECT_DIR="${PROJECT_DIR:-$HOME/devel/grok-leash}"
+resolve_project_dir() {
+    if [[ -n "${PROJECT_DIR:-}" ]]; then
+        echo "$PROJECT_DIR"
+        return
+    fi
+
+    if git rev-parse --is-inside-work-tree &>/dev/null; then
+        git rev-parse --show-toplevel
+        return
+    fi
+
+    echo "ERROR: Could not determine grok-leash project directory." >&2
+    echo "Set PROJECT_DIR or run from inside the grok-leash git repository." >&2
+    exit 1
+}
+
+PROJECT_DIR="$(resolve_project_dir)"
+cd "$PROJECT_DIR"
+
 UV_BIN="${UV_BIN:-uv}"
 
-cd "$PROJECT_DIR"
 exec "$UV_BIN" run grok-leash watch-actions "$@"

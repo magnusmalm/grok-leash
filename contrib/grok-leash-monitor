@@ -6,21 +6,41 @@
 # Copy this file to ~/.local/bin/grok-leash-monitor (or any directory in $PATH)
 # and make it executable.
 #
+# The script tries to locate the grok-leash project root in this order:
+#   1. $PROJECT_DIR (environment variable)
+#   2. Current git repository root (if you are inside the grok-leash clone)
+#   3. Error with instructions
+#
 # Usage:
 #   grok-leash-monitor
 #   grok-leash-monitor watch-actions
 #
-# Environment variables you can override:
-#   PROJECT_DIR   - Where you cloned grok-leash (default: ~/devel/grok-leash)
-#   UV_BIN        - Full path to the uv binary (default: uv from $PATH)
-#
 
 set -euo pipefail
 
-PROJECT_DIR="${PROJECT_DIR:-$HOME/devel/grok-leash}"
-UV_BIN="${UV_BIN:-uv}"
+resolve_project_dir() {
+    if [[ -n "${PROJECT_DIR:-}" ]]; then
+        echo "$PROJECT_DIR"
+        return
+    fi
 
+    if git rev-parse --is-inside-work-tree &>/dev/null; then
+        git rev-parse --show-toplevel
+        return
+    fi
+
+    echo "ERROR: Could not determine grok-leash project directory." >&2
+    echo "Either:" >&2
+    echo "  - Set PROJECT_DIR=/path/to/grok-leash" >&2
+    echo "  - Run the command from inside the grok-leash git repository" >&2
+    echo "  - Or cd into the project and run 'uv run grok-leash' directly" >&2
+    exit 1
+}
+
+PROJECT_DIR="$(resolve_project_dir)"
 cd "$PROJECT_DIR"
+
+UV_BIN="${UV_BIN:-uv}"
 
 if [[ "${1:-}" == "watch-actions" ]]; then
     exec "$UV_BIN" run grok-leash watch-actions

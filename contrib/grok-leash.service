@@ -5,11 +5,14 @@ After=graphical-session.target
 
 [Service]
 Type=simple
-WorkingDirectory=%h/devel/grok-leash
 
-# We recommend installing the launcher script first:
-#   cp contrib/grok-leash-monitor ~/.local/bin/
-#   chmod +x ~/.local/bin/grok-leash-monitor
+# The launcher (grok-leash-monitor) will automatically cd into the project root
+# if PROJECT_DIR is set in the environment or if the service is started while
+# the user is inside the git repository.
+#
+# If you need to force a specific directory, uncomment and set it:
+# WorkingDirectory=%h/path/to/your/grok-leash
+
 ExecStart=%h/.local/bin/grok-leash-monitor
 
 Restart=on-failure
