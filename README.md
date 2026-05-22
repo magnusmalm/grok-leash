@@ -236,7 +236,9 @@ See `prompts/periodic-checker.md` for a standing instruction you can give the ma
 
 ## Status
 
-This project was created in response to the May 2026 subagent runaway incident (~750M tokens burned by a subagent on a simple commit task). It is under active development as a practical defense-in-depth layer.
+This project was created in May 2026 as an emergency defense-in-depth response to a severe subagent runaway incident. It was always intended as a **temporary mitigation layer** while the root causes were addressed in Grok Build and the underlying models.
+
+As the platform improves and adds stronger native safeguards against runaway behavior, tools like `grok-leash` will naturally become less necessary. This is the desired outcome. In the meantime, the patterns here (strict termination budgets, external monitoring, dedicated safe skills, and hard tool-use hooks) remain useful techniques for working with agentic systems.
 
 ## License
 
