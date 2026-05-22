@@ -1,0 +1,22 @@
+[Unit]
+Description=grok-leash - Runaway subagent monitor (defense against token-explosive loops)
+Documentation=https://github.com/magnusmalm/grok-leash
+After=graphical-session.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/devel/grok-leash
+
+# We recommend installing the launcher script first:
+#   cp contrib/grok-leash-monitor ~/.local/bin/
+#   chmod +x ~/.local/bin/grok-leash-monitor
+ExecStart=%h/.local/bin/grok-leash-monitor
+
+Restart=on-failure
+RestartSec=15
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=grok-leash
+
+[Install]
+WantedBy=default.target

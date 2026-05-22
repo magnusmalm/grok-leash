@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#
+# contrib/grok-leash-watch
+#
+# Portable launcher for the actions watcher (companion to the main monitor).
+# Copy to ~/.local/bin/grok-leash-watch and make executable.
+#
+# Usage:
+#   grok-leash-watch
+#
+
+set -euo pipefail
+
+PROJECT_DIR="${PROJECT_DIR:-$HOME/devel/grok-leash}"
+UV_BIN="${UV_BIN:-uv}"
+
+cd "$PROJECT_DIR"
+exec "$UV_BIN" run grok-leash watch-actions "$@"

@@ -117,6 +117,53 @@ grok-tap
 GROK_CLI_CHAT_PROXY_BASE_URL=http://127.0.0.1:18080/v1 uv run grok-leash
 ```
 
+### Running persistently (systemd or tmux)
+
+For day-to-day use you almost certainly want the monitor running in the background so it can alert you (and your main Grok session) in real time.
+
+#### Option 1: systemd user service (fire-and-forget)
+
+1. Install the launchers:
+
+   ```bash
+   mkdir -p ~/.local/bin
+   cp contrib/grok-leash-monitor contrib/grok-leash-watch ~/.local/bin/
+   chmod +x ~/.local/bin/grok-leash-*
+   ```
+
+2. Copy and enable the service:
+
+   ```bash
+   mkdir -p ~/.config/systemd/user
+   cp contrib/grok-leash.service ~/.config/systemd/user/
+   systemctl --user daemon-reload
+   systemctl --user enable --now grok-leash.service
+   ```
+
+3. Watch logs:
+
+   ```bash
+   journalctl --user -u grok-leash.service -f
+   ```
+
+#### Option 2: tmux (easy to inspect)
+
+```bash
+tmux new-session -s grok-leash
+# pane 1
+grok-leash-monitor
+# split pane (Ctrl-b ") and run:
+grok-leash-watch
+```
+
+The launchers default to `~/devel/grok-leash`. If you cloned elsewhere, set `PROJECT_DIR`:
+
+```bash
+PROJECT_DIR=$HOME/work/grok-leash grok-leash-monitor
+```
+
+See `contrib/` for the exact files.
+
 ## Configuration
 
 Create `~/.config/grok-leash/config.toml`:

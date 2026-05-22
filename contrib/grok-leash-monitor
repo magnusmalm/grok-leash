@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+#
+# contrib/grok-leash-monitor
+#
+# Portable launcher for the grok-leash monitor.
+# Copy this file to ~/.local/bin/grok-leash-monitor (or any directory in $PATH)
+# and make it executable.
+#
+# Usage:
+#   grok-leash-monitor
+#   grok-leash-monitor watch-actions
+#
+# Environment variables you can override:
+#   PROJECT_DIR   - Where you cloned grok-leash (default: ~/devel/grok-leash)
+#   UV_BIN        - Full path to the uv binary (default: uv from $PATH)
+#
+
+set -euo pipefail
+
+PROJECT_DIR="${PROJECT_DIR:-$HOME/devel/grok-leash}"
+UV_BIN="${UV_BIN:-uv}"
+
+cd "$PROJECT_DIR"
+
+if [[ "${1:-}" == "watch-actions" ]]; then
+    exec "$UV_BIN" run grok-leash watch-actions
+else
+    exec "$UV_BIN" run grok-leash "$@"
+fi
