@@ -9,6 +9,7 @@ Focus: repeated read_file calls on the same files with small limits
 """
 
 import json
+import re
 import subprocess
 import time
 from collections import defaultdict
@@ -22,6 +23,19 @@ from rich.panel import Panel
 from rich.text import Text
 
 from .config import GrokLeashConfig, load_config, ensure_action_dir
+
+
+def has_termination_budget(text: str) -> bool:
+    """Heuristic: does the prompt text mention any form of termination budget?"""
+    if not text:
+        return False
+    t = text.lower()
+    markers = [
+        "at most", "hard limit", "stop after", "report back after",
+        "tool calls", "minutes", "termination budget", "budget",
+        "whichever comes first"
+    ]
+    return any(m in t for m in markers)
 
 GROK_SESSIONS = Path.home() / ".grok" / "sessions"
 ALERT_COOLDOWN_SECONDS = 60
@@ -358,12 +372,12 @@ def cli_main():
 
     parser = argparse.ArgumentParser(description="grok-leash - Subagent runaway monitor")
     parser.add_argument("--session", help="Specific session id (partial match)")
-    parser.add_argument("--threshold", type=int, default=DEFAULT_READ_THRESHOLD,
-                        help="Number of repeated reads that triggers an alert")
+    parser.add_argument("--threshold", type=int,
+                        help="Number of repeated reads that triggers an alert (overrides config)")
     args = parser.parse_args()
 
     config = load_config()
-    if args.threshold != 30:  # user overrode default
+    if args.threshold is not None:
         config.read_threshold = args.threshold
 
     monitor = RunawayMonitor(config=config)
