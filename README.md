@@ -50,6 +50,18 @@ uv run pytest
 
 (You can also activate the venv with `source .venv/bin/activate` and then use the commands directly.)
 
+### Host-level pieces (not included in this repo)
+
+This repository provides the monitor, launchers, and systemd example.
+
+For the **complete defense-in-depth setup** on a new machine you will also need (maintained separately on each host):
+
+- The `grok-leash` skill at `~/.grok/skills/grok-leash/SKILL.md`
+- The `read-file-guard` PreToolUse hook (`~/.grok/hooks/`)
+- Subagent Safety rules in `~/.claude/CLAUDE-shared.md` (and project `CLAUDE.md` files)
+
+Cloning + `uv sync` + the persistent monitor only covers the **real-time monitoring** layer.
+
 ## Usage
 
 ### Basic runaway monitoring (recommended)
@@ -140,6 +152,13 @@ For day-to-day use you almost certainly want the monitor running in the backgrou
    systemctl --user enable --now grok-leash.service
    ```
 
+**Important:** The launchers default to `~/devel/grok-leash`.  
+If you cloned the repo to a different location, set the environment variable when running the commands:
+
+```bash
+PROJECT_DIR=$HOME/path/to/grok-leash grok-leash-monitor
+```
+
 3. Watch logs:
 
    ```bash
@@ -156,7 +175,8 @@ grok-leash-monitor
 grok-leash-watch
 ```
 
-The launchers default to `~/devel/grok-leash`. If you cloned elsewhere, set `PROJECT_DIR`:
+**Note on clone location:** The launchers hard-code a default of `~/devel/grok-leash`.  
+If your clone lives elsewhere, prefix commands with `PROJECT_DIR=...`:
 
 ```bash
 PROJECT_DIR=$HOME/work/grok-leash grok-leash-monitor
@@ -166,14 +186,22 @@ See `contrib/` for the exact files.
 
 ## Configuration
 
-Create `~/.config/grok-leash/config.toml`:
+Create `~/.config/grok-leash/config.toml` (copy from `config.example.toml` in this repo as a starting point):
 
 ```toml
 [monitor]
-read_file_threshold = 25          # Alert after this many reads of the same file
-time_window_minutes = 8
-min_limit_for_alert = 50          # Only alert on small limits
+read_threshold = 30
+time_window_minutes = 6
+small_limit_threshold = 80
+
+[actions]
 enable_desktop_notifications = true
+enable_kill_action = false          # experimental
+write_action_file = true
+notify_parent_via_file = true
+
+[detection]
+warn_on_missing_budget = true
 ```
 
 ## How It Fits Into the Larger Picture
