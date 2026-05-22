@@ -6,11 +6,11 @@
 
 ## The Problem
 
-In the incident (documented in `~/grok-sub-agent-runaway-issue/INCIDENT.md`), a subagent given the simple request:
+In May 2026, a subagent was given the simple request:
 
 > "Let's make Agent 2 do the commit."
 
-...ran for 82 minutes, performed **2,384 tool calls** (almost all tiny `read_file limit=5` loops on the same two files), and consumed roughly **750 million tokens** before being manually cancelled.
+It ran for 82 minutes, performed **2,384 tool calls** (almost all tiny `read_file limit=5` loops on the same two files), and consumed roughly **750 million tokens** before being manually cancelled.
 
 Root causes observed:
 - No termination budget in the subagent prompt
