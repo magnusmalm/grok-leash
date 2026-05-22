@@ -182,6 +182,53 @@ The launchers will find the project automatically if you are inside the git repo
 
 See `contrib/` for the exact files.
 
+## Uninstallation
+
+Since `grok-leash` is intended as a temporary mitigation layer, here is how to completely remove it when it is no longer needed (i.e. once Grok Build and the models have strong enough built-in protections).
+
+### 1. Stop and disable the background monitor
+
+```bash
+systemctl --user disable --now grok-leash.service
+rm ~/.config/systemd/user/grok-leash.service
+systemctl --user daemon-reload
+```
+
+### 2. Remove the convenience launchers
+
+```bash
+rm -f ~/.local/bin/grok-leash-monitor
+rm -f ~/.local/bin/grok-leash-watch
+```
+
+### 3. Remove the PreToolUse hook
+
+```bash
+rm -f ~/.grok/hooks/read-file-guard.json
+rm -f ~/.grok/hooks/read-file-guard.sh
+```
+
+### 4. Remove the skill
+
+```bash
+rm -rf ~/.grok/skills/grok-leash
+```
+
+### 5. Remove configuration and runtime data
+
+```bash
+rm -rf ~/.config/grok-leash
+rm -rf ~/.grok-leash
+```
+
+### 6. (Optional) Review safety rules
+
+The "Subagent Safety" guidelines we added to `~/.claude/CLAUDE-shared.md` and your project `CLAUDE.md` files contain generally useful practices (explicit termination budgets, avoiding tiny `read_file` loops, etc.). You may want to keep or lightly edit those sections rather than delete them entirely.
+
+### 7. Delete the repository
+
+You can now safely delete the `grok-leash` directory you cloned.
+
 ## Configuration
 
 Create `~/.config/grok-leash/config.toml` (copy from `config.example.toml` in this repo as a starting point):
