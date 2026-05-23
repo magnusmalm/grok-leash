@@ -14,3 +14,12 @@ notify_parent_via_file = true
 
 [detection]
 warn_on_missing_budget = true
+
+[hook]
+# Hard limit on how many times the same file can be read via read_file
+# in a single session. The counter resets if the file is modified.
+read_file_hard_cap = 42
+
+# When the read count for a file exceeds this number, a warning is printed
+# to stderr (visible in the agent's output). Defaults to hard_cap / 2.
+read_file_warning_threshold = 21
