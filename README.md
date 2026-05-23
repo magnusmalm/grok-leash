@@ -249,6 +249,32 @@ notify_parent_via_file = true
 warn_on_missing_budget = true
 ```
 
+### The `read-file-guard` Hook
+
+This project ships an improved version of the `read-file-guard` PreToolUse hook (see `contrib/hooks/read-file-guard.sh`).
+
+Key improvements:
+
+- The number of times the same file can be read via `read_file` in a single session is now configurable.
+- By default the hard limit is **42** reads per file.
+- The counter for a specific file **resets** if the file has been modified since it was last read (based on mtime).
+- A warning is emitted once the read count exceeds the warning threshold (defaults to half the hard cap).
+
+You can customize both values in your config:
+
+```toml
+[hook]
+read_file_hard_cap = 42
+read_file_warning_threshold = 21
+```
+
+To install or update the hook:
+
+```bash
+cp contrib/hooks/read-file-guard.sh ~/.grok/hooks/read-file-guard.sh
+chmod +x ~/.grok/hooks/read-file-guard.sh
+```
+
 ## How It Fits Into the Larger Picture
 
 `grok-leash` is the **monitoring layer** in a defense-in-depth strategy:
